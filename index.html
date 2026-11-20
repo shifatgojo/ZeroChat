@@ -1,327 +1,364 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ZeroChat</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#070b14;color:#eef4ff}
-button,input{font:inherit}button{cursor:pointer}input{outline:none}
-.hidden{display:none!important}
-#toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 18px;border-radius:12px;background:#18233d;border:1px solid #33486f;box-shadow:0 12px 40px #0008;opacity:0;pointer-events:none;transition:.2s}
-#toast.show{opacity:1}.error{border-color:#7d3c48!important}.success{border-color:#317054!important}
-.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 0,#1a2c55 0,#070b14 55%)}
-.card{width:min(430px,94vw);padding:30px;border:1px solid #263858;background:#101827dd;border-radius:24px;box-shadow:0 30px 100px #0009}
-.logo{font-weight:900;font-size:30px;letter-spacing:2px}.logo span{color:#6ea0ff}
-.tag{color:#8f9db8;margin:8px 0 26px}.card h2{margin:0 0 14px}
-.field{width:100%;padding:13px 14px;margin:6px 0;background:#0b1220;border:1px solid #293a5c;border-radius:11px;color:#fff}
-.primary{width:100%;padding:13px;border:0;border-radius:11px;background:linear-gradient(135deg,#5d8cff,#795cf6);color:white;font-weight:800;margin-top:8px}
-.link{background:none;border:0;color:#78a7ff;padding:0}.switch{color:#8998b4;text-align:center;font-size:13px;margin-top:18px}
-.msg{min-height:18px;font-size:12px;margin-top:10px;color:#ff9a9a}.msg.ok{color:#70e0a0}
-.app{height:100vh;display:grid;grid-template-columns:270px minmax(0,1fr) 250px;background:#090e18}
-.sidebar,.right{background:#0e1625;border-color:#202e4b}.sidebar{border-right:1px solid #202e4b}.right{border-left:1px solid #202e4b;padding:20px}
-.side-top{height:68px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #202e4b}
-.logo.small{font-size:20px}.icon{width:38px;height:38px;border:0;border-radius:10px;background:#1d2a46;color:#fff}
-.me{display:flex;gap:11px;align-items:center;padding:18px;border-bottom:1px solid #202e4b}
-.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#5d8cff,#895cf4);font-weight:900;flex:none}
-.me small{display:block;color:#7788a7;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;max-width:180px}
-.nav{padding:12px}.nav button{display:block;width:100%;border:0;background:transparent;color:#aebbd3;text-align:left;padding:12px;border-radius:10px;margin:2px 0}.nav button.active,.nav button:hover{background:#1a2947;color:#fff}
-.list{padding:8px 12px;max-height:calc(100vh - 260px);overflow:auto}.row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px}.row:hover{background:#18253f}.row .avatar{width:34px;height:34px;font-size:12px}.row-text{min-width:0}.row-text strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-text small{color:#7788a7}
-.chat{min-width:0;display:flex;flex-direction:column}.head{height:76px;border-bottom:1px solid #202e4b;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}.head h2{font-size:18px;margin:0}.head p{font-size:12px;color:#7f8eab;margin:4px 0 0}
-.messages{flex:1;overflow:auto;padding:24px}.empty{text-align:center;color:#71809d;margin-top:90px}
-.message{max-width:72%;margin:9px 0}.message.mine{margin-left:auto}.bubble{display:inline-block;padding:10px 13px;border-radius:15px;background:#16223a;border:1px solid #273858;white-space:pre-wrap;word-break:break-word}.mine .bubble{background:#31558f;border-color:#426db0}.meta{font-size:10px;color:#71809d;margin:4px 6px}.mine .meta{text-align:right}
-.composer{display:flex;gap:9px;padding:14px;border-top:1px solid #202e4b}.composer input{flex:1;padding:13px 15px;background:#111a2c;border:1px solid #293b60;border-radius:13px;color:white}.send{width:50px;border:0;border-radius:12px;background:#5d8cff;color:white;font-size:18px}
-.online-title{margin:0 0 14px;font-size:15px}.online{display:flex;align-items:center;gap:8px;padding:8px 0;color:#c9d4e8;font-size:13px}.dot{width:8px;height:8px;border-radius:50%;background:#35d88b}.tip{margin-top:24px;padding:13px;border:1px solid #263858;background:#131e33;border-radius:13px;color:#8290aa;font-size:12px;line-height:1.5}
-@media(max-width:900px){.app{grid-template-columns:220px minmax(0,1fr)}.right{display:none}}
-@media(max-width:650px){.app{grid-template-columns:1fr}.sidebar{display:none}.messages{padding:14px}.message{max-width:88%}}
-</style>
-</head>
-<body>
+:root{--bg:#0e1013;--p:#161a20;--p2:#1e232b;--t:#e9ecf2;--m:#8a92a3;--a:#5eead4;--ad:#0f766e;--b:#2a303a;--me:#115e59;--r:#ff6b7a}
+:root.light{--bg:#eef1f5;--p:#fff;--p2:#eef1f5;--t:#171a21;--m:#667085;--a:#0f766e;--ad:#0f766e;--b:#dde2ea;--me:#ccfbf1}
+*{box-sizing:border-box;margin:0}
+body{font:15px/1.4 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--t);height:100dvh;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:7px 12px;cursor:pointer;transition:.15s}
+button:hover{border-color:var(--a)}
+button.pri{background:var(--a);color:#06231f;border-color:var(--a);font-weight:600}
+button.danger{color:var(--r)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--a)}
+input,textarea{background:var(--p2);border:1px solid var(--b);border-radius:10px;padding:9px 12px;width:100%}
+[hidden]{display:none!important}
+.av{border-radius:50%;background:var(--ad);color:#fff;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none;position:relative}
+.av img{width:100%;height:100%;object-fit:cover}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--m);flex:none}.dot.on{background:#34d399}
+#auth{height:100%;display:grid;place-items:center;padding:16px}
+.card{background:var(--p);border:1px solid var(--b);border-radius:16px;padding:24px;width:100%;max-width:400px;display:grid;gap:10px;max-height:92dvh;overflow:auto}
+.card h1{font-size:28px;letter-spacing:-.5px}.muted{color:var(--m);font-size:13px}
+.lnk{background:none;border:0;color:var(--a);padding:2px;text-align:left}
+.err{color:var(--r);font-size:13px;min-height:18px}
+#app{display:flex;height:100%}
+#side{width:340px;background:var(--p);border-right:1px solid var(--b);display:flex;flex-direction:column;flex:none}
+.top{display:flex;align-items:center;gap:8px;padding:12px}.top b{flex:1;font-size:18px}
+.tabs{display:flex;gap:4px;padding:0 12px 8px}.tabs button{flex:1;border-radius:8px}.tabs .on{background:var(--a);color:#06231f;border-color:var(--a)}
+.badge{background:var(--r);color:#fff;border-radius:99px;font-size:11px;padding:1px 6px;margin-left:4px}
+#list{flex:1;overflow:auto;padding:0 8px 12px}
+.item{display:flex;gap:10px;align-items:center;padding:9px;border-radius:12px;cursor:pointer}.item:hover{background:var(--p2)}
+.item .mid{flex:1;min-width:0}.item .mid div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec{color:var(--m);font-size:12px;margin:12px 6px 4px}
+#main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+#empty{margin:auto;text-align:center;color:var(--m);padding:20px}
+#room{display:flex;flex-direction:column;height:100%}
+.rh{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--p);border-bottom:1px solid var(--b)}
+.rh .mid{flex:1;min-width:0}#back{display:none}
+#msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:6px}
+.row{display:flex;gap:8px;align-items:flex-end;max-width:100%}.row.mine{justify-content:flex-end}
+.bub{background:var(--p);border:1px solid var(--b);border-radius:16px 16px 16px 4px;padding:7px 11px;max-width:min(520px,80%);position:relative}
+.mine .bub{background:var(--me);border-radius:16px 16px 4px 16px;border-color:transparent}
+.mine .bub{color:var(--t)}.light .mine .bub{color:#042f2c}
+.nm{font-size:12px;color:var(--a);font-weight:600}.txt{white-space:pre-wrap;overflow-wrap:anywhere}
+.meta{font-size:11px;color:var(--m);text-align:right}.seen{color:var(--a)}
+.quote{border-left:3px solid var(--a);padding:2px 8px;margin-bottom:4px;font-size:13px;color:var(--m);display:grid}
+.pic{max-width:100%;max-height:260px;border-radius:10px;display:block;cursor:zoom-in}
+.file{color:var(--a);overflow-wrap:anywhere}
+.acts{position:absolute;top:-14px;right:6px;display:none;gap:2px;background:var(--p);border:1px solid var(--b);border-radius:8px;padding:1px}
+.bub:hover .acts{display:flex}.acts button{padding:1px 6px;border:0;background:none}
+.rx{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}.rx span{background:var(--p2);border-radius:99px;padding:0 7px;font-size:12px}
+#typing{height:18px;font-size:12px;color:var(--m);padding:0 16px}
+#rbar{padding:6px 14px;background:var(--p2);display:flex;justify-content:space-between;font-size:13px}
+.comp{display:flex;gap:8px;padding:10px 12px;background:var(--p);border-top:1px solid var(--b);align-items:flex-end;position:relative}
+.comp textarea{resize:none;max-height:120px;height:40px}
+#emo{position:absolute;bottom:62px;left:12px;background:var(--p);border:1px solid var(--b);border-radius:12px;padding:8px;display:grid;grid-template-columns:repeat(8,1fr);gap:2px;max-width:300px}
+#emo button{border:0;background:none;font-size:20px;padding:3px}
+#modal{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:12px;z-index:20}
+#toasts{position:fixed;top:12px;right:12px;display:grid;gap:8px;z-index:30;max-width:calc(100% - 24px)}
+.toast{background:var(--p);border:1px solid var(--a);border-radius:10px;padding:10px 14px;box-shadow:0 6px 20px #0006;animation:in .25s}.toast.err{border-color:var(--r)}
+@keyframes in{from{opacity:0;transform:translateY(-8px)}}
+.spin{width:16px;height:16px;border:2px solid var(--b);border-top-color:var(--a);border-radius:50%;animation:s .7s linear infinite;display:inline-block;vertical-align:middle}@keyframes s{to{transform:rotate(1turn)}}
+@media(max-width:760px){#side{width:100%}#main{position:fixed;inset:0;transform:translateX(100%);transition:transform .25s;z-index:5}.inroom #main{transform:none}#back{display:block}.bub{max-width:88%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
 
-<div id="toast"></div>
+<!-- ============ AUTH SCREEN ============ -->
+<div id="auth" hidden><div class="card">
+  <h1>ZeroChat</h1><div class="muted" id="amode">Sign in to chat with your friends.</div>
+  <input id="aname" placeholder="Display name" autocomplete="name" hidden>
+  <input id="auser" placeholder="Username (a-z, 0-9, _)" autocomplete="username" hidden>
+  <input id="aemail" type="email" placeholder="Email" autocomplete="email">
+  <input id="apass" type="password" placeholder="Password" autocomplete="current-password">
+  <input id="apass2" type="password" placeholder="Confirm password" autocomplete="new-password" hidden>
+  <div class="err" id="aerr"></div>
+  <button class="pri" id="abtn">Log in</button>
+  <button class="lnk" id="aswap">New here? Create an account</button>
+  <button class="lnk" id="aforgot">Forgot password?</button>
+</div></div>
 
-<section id="auth" class="auth">
-  <div class="card">
-    <div class="logo"><span>ZERO</span>CHAT</div>
-    <div class="tag">Real-time chat, made simple.</div>
-
-    <div id="loginPanel">
-      <h2>Login</h2>
-      <input id="loginEmail" class="field" type="email" autocomplete="email" placeholder="Email">
-      <input id="loginPass" class="field" type="password" autocomplete="current-password" placeholder="Password">
-      <button id="loginBtn" class="primary">Login</button>
-      <div id="loginMsg" class="msg"></div>
-      <p class="switch">New here? <button id="goSignup" class="link">Create an account</button></p>
-    </div>
-
-    <div id="signupPanel" class="hidden">
-      <h2>Create account</h2>
-      <input id="name" class="field" type="text" maxlength="30" placeholder="Display name">
-      <input id="signupEmail" class="field" type="email" autocomplete="email" placeholder="Email">
-      <input id="signupPass" class="field" type="password" autocomplete="new-password" placeholder="Password (6+ characters)">
-      <input id="signupPass2" class="field" type="password" autocomplete="new-password" placeholder="Confirm password">
-      <button id="signupBtn" class="primary">Create account</button>
-      <div id="signupMsg" class="msg"></div>
-      <p class="switch">Already have an account? <button id="goLogin" class="link">Login</button></p>
-    </div>
-  </div>
-</section>
-
-<section id="app" class="app hidden">
-  <aside class="sidebar">
-    <div class="side-top">
-      <div class="logo small"><span>ZERO</span>CHAT</div>
-      <button id="logout" class="icon" title="Logout">↪</button>
-    </div>
-    <div class="me">
-      <div id="myAvatar" class="avatar">Z</div>
-      <div><strong id="myName">User</strong><small id="myEmail"></small></div>
-    </div>
-    <div class="nav">
-      <button class="navBtn active" data-section="world">🌍 World Chat</button>
-      <button class="navBtn" data-section="friends">👥 Users</button>
-      <button class="navBtn" data-section="groups">▣ Groups</button>
-    </div>
-    <div id="usersList" class="list hidden"></div>
-    <div id="groupsList" class="list hidden"></div>
+<!-- ============ MAIN APP ============ -->
+<div id="app" hidden>
+  <aside id="side">
+    <div class="top"><span id="meAv" style="cursor:pointer" title="Edit profile"></span><b>ZeroChat</b>
+      <button id="theme" title="Toggle theme">◐</button><button id="out" title="Log out">Log out</button></div>
+    <div class="tabs"><button data-t="chats" class="on">Chats</button><button data-t="friends">Friends<span id="rb" class="badge" hidden></span></button><button data-t="find">Find</button></div>
+    <div id="list"></div>
   </aside>
-
-  <main class="chat">
-    <header class="head">
-      <div><h2 id="title">World Chat</h2><p id="subtitle">Everyone can join</p></div>
-      <button id="createGroup" class="icon hidden" title="Create group">＋</button>
-    </header>
-    <div id="messages" class="messages"><div class="empty">Loading…</div></div>
-    <form id="composer" class="composer">
-      <input id="message" maxlength="2000" autocomplete="off" placeholder="Write a message…">
-      <button class="send">➤</button>
-    </form>
+  <main id="main">
+    <div id="empty"><h2>Pick a conversation</h2><p>Open World Chat, or add friends in the Find tab to start a private chat.</p></div>
+    <section id="room" hidden>
+      <div class="rh"><button id="back">←</button><span id="rAv"></span>
+        <div class="mid"><b id="rTitle"></b><div class="muted" id="rSub"></div></div>
+        <input id="rq" placeholder="Search messages" style="max-width:170px"><button id="rInfo" hidden>Members</button></div>
+      <div id="msgs"></div><div id="typing"></div>
+      <div id="rbar" hidden><span id="rtxt"></span><button class="lnk" id="rx">✕</button></div>
+      <div class="comp"><div id="emo" hidden></div>
+        <button id="attach" title="Attach photo or file">📎</button><input type="file" id="file" hidden>
+        <button id="emoBtn" title="Emoji">😊</button>
+        <textarea id="inp" rows="1" maxlength="2000" placeholder="Write a message"></textarea>
+        <button class="pri" id="send">Send</button></div>
+    </section>
   </main>
-
-  <aside class="right">
-    <h3 class="online-title">Online users</h3>
-    <div id="onlineUsers"></div>
-    <div class="tip"><b>ZeroChat</b><br>Open this app in another browser/device with another account to test real-time chat.</div>
-  </aside>
-</section>
+</div>
+<div id="modal" hidden></div><div id="toasts"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
-  signInWithEmailAndPassword, signOut, updateProfile
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import {
-  getDatabase, ref, set, update, push, onValue, get,
-  query, orderByChild, limitToLast, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+/* ============ 1. FIREBASE INIT ============ */
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getDatabase,ref,get,set,update,push,remove,onValue,onChildAdded,onChildChanged,onChildRemoved,runTransaction,serverTimestamp,onDisconnect,query,orderByKey,startAt,endAt,limitToFirst,limitToLast} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {getStorage,ref as sref,uploadBytes,getDownloadURL} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+const firebaseConfig={apiKey:"AIzaSyCKaBiOUjgwtmJTWGf8alMN2m6bDgHf2eQ",authDomain:"zerochat-b41a2.firebaseapp.com",projectId:"zerochat-b41a2",storageBucket:"zerochat-b41a2.firebasestorage.app",messagingSenderId:"259509798453",appId:"1:259509798453:web:d3571d6211325609b2537c",measurementId:"G-3TRJWP4GP6"};
+const databaseURL="https://zerochat-b41a2-default-rtdb.firebaseio.com/";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getDatabase(app,databaseURL),st=getStorage(app);
 
-const firebaseConfig={
-  apiKey:"AIzaSyCKaBiOUjgwtmJTWGf8alMN2m6bDgHf2eQ",
-  authDomain:"zerochat-b41a2.firebaseapp.com",
-  databaseURL:"https://zerochat-b41a2-default-rtdb.firebaseio.com/",
-  projectId:"zerochat-b41a2",
-  storageBucket:"zerochat-b41a2.firebasestorage.app",
-  messagingSenderId:"259509798453",
-  appId:"1:259509798453:web:d3571d6211325609b2537c",
-  measurementId:"G-3TRJWP4GP6"
-};
-
-const firebaseApp=initializeApp(firebaseConfig);
-const auth=getAuth(firebaseApp);
-const db=getDatabase(firebaseApp);
-
+/* ============ 2. HELPERS ============ */
 const $=id=>document.getElementById(id);
-let user=null, room="world", stopMessages=null, stopOnline=null;
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const[x,v]of Object.entries(a)){if(x==='class')e.className=v;else if(x.startsWith('on'))e.addEventListener(x.slice(2),v);else if(x==='text')e.textContent=v;else e.setAttribute(x,v)}e.append(...k.flat().filter(c=>c!=null&&c!==false));return e};
+const safe=u=>typeof u==='string'&&/^https:\/\//.test(u);
+const ini=u=>((u&&u.name)||'?')[0].toUpperCase();
+const av=(u,s=40)=>{const d=h('div',{class:'av',style:`width:${s}px;height:${s}px`});if(u&&safe(u.photo)){const i=h('img',{src:u.photo,alt:''});i.onerror=()=>{i.remove();d.textContent=ini(u)};d.append(i)}else d.textContent=ini(u);return d};
+const ERR={'auth/email-already-in-use':'That email is already registered.','auth/invalid-credential':'Incorrect email or password.','auth/weak-password':'Password must be at least 6 characters.','auth/invalid-email':'Enter a valid email address.','auth/user-not-found':'No account with that email.','auth/too-many-requests':'Too many attempts. Try again later.','auth/network-request-failed':'Network error. Check your connection.','auth/operation-not-allowed':'Enable Email/Password sign-in in Firebase Authentication.'};
+const msgOf=e=>ERR[e.code]||(/permission/i.test(e.message)?'Permission denied. Publish the database/storage rules in Firebase Console.':e.message||'Something went wrong.');
+function toast(t,type=''){const d=h('div',{class:'toast '+type,text:t});$('toasts').append(d);setTimeout(()=>d.remove(),4500)}
+const fail=e=>{console.error(e);toast(msgOf(e),'err')};
+const note=(t,b)=>{toast(t+(b?': '+b:''));if('Notification'in window&&Notification.permission==='granted'&&document.hidden)new Notification(t,{body:b})};
+const U={},G={};let me=null;
+const getU=async id=>U[id]||(U[id]={...((await get(ref(db,'users/'+id))).val()||{name:'Unknown',username:'?'}),uid:id});
+const loadG=async id=>{const[m,mem]=await Promise.all([get(ref(db,`groups/${id}/meta`)),get(ref(db,`groups/${id}/members`))]);return G[id]={...(m.val()||{name:'Group'}),members:mem.val()||{}}};
+const cidOf=(a,b)=>[a,b].sort().join('_');
+const upload=async(file,folder)=>{if(file.size>10e6)throw new Error('File too large (max 10 MB).');const r=sref(st,`${folder}/${me}/${Date.now()}_${file.name.replace(/[^\w.\-]/g,'_')}`);await uploadBytes(r,file);return getDownloadURL(r)};
+const modal=(...k)=>{const m=$('modal');m.replaceChildren(h('div',{class:'card'},...k));m.hidden=false};
+const closeModal=()=>{$('modal').hidden=true};
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+if(localStorage.theme==='light')document.documentElement.classList.add('light');
+$('theme').onclick=()=>{localStorage.theme=document.documentElement.classList.toggle('light')?'light':'dark'};
 
-function toast(text,error=false){
-  const x=$("toast");x.textContent=text;x.className="show"+(error?" error":"");
-  clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.className="",3200);
-}
-function setMsg(id,text,error=false){const x=$(id);x.textContent=text;x.className="msg"+(error?"":" ok")}
-function letter(name){return (name||"U").trim().charAt(0).toUpperCase()}
-function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-
-$("goSignup").onclick=()=>{
-  $("loginPanel").classList.add("hidden");$("signupPanel").classList.remove("hidden");
-  $("loginMsg").textContent="";
-};
-$("goLogin").onclick=()=>{
-  $("signupPanel").classList.add("hidden");$("loginPanel").classList.remove("hidden");
-  $("signupMsg").textContent="";
-};
-
-$("signupBtn").onclick=async()=>{
-  const name=$("name").value.trim(),email=$("signupEmail").value.trim(),p=$("signupPass").value,p2=$("signupPass2").value;
-  setMsg("signupMsg","");
-  if(name.length<2)return setMsg("signupMsg","Name must be at least 2 characters.",true);
-  if(!email)return setMsg("signupMsg","Enter your email.",true);
-  if(p.length<6)return setMsg("signupMsg","Password must be at least 6 characters.",true);
-  if(p!==p2)return setMsg("signupMsg","Passwords do not match.",true);
-  const b=$("signupBtn");b.disabled=true;b.textContent="Creating…";
+/* ============ 3. AUTH ============ */
+let mode='login',busy=false;
+function setMode(m){mode=m;const s=m==='signup',f=m==='forgot';
+  $('aname').hidden=$('auser').hidden=$('apass2').hidden=!s;$('apass').hidden=f;$('aerr').textContent='';
+  $('abtn').textContent=s?'Create account':f?'Send reset email':'Log in';
+  $('aswap').textContent=m==='login'?'New here? Create an account':'Back to log in';
+  $('amode').textContent=s?'Pick a unique username your friends can find.':f?'We will email you a reset link.':'Sign in to chat with your friends.'}
+$('aswap').onclick=()=>setMode(mode==='login'?'signup':'login');
+$('aforgot').onclick=()=>setMode('forgot');
+$('abtn').onclick=async()=>{
+  const email=$('aemail').value.trim(),pw=$('apass').value,btn=$('abtn'),old=btn.textContent;$('aerr').textContent='';
+  const bad=m=>{$('aerr').textContent=m};
+  if(!/^\S+@\S+\.\S+$/.test(email))return bad('Enter a valid email address.');
+  btn.disabled=true;btn.replaceChildren(h('span',{class:'spin'}));
   try{
-    const cred=await createUserWithEmailAndPassword(auth,email,p);
-    await updateProfile(cred.user,{displayName:name});
-    await set(ref(db,"users/"+cred.user.uid),{
-      name,email,online:true,createdAt:serverTimestamp(),lastSeen:serverTimestamp()
-    });
-    setMsg("signupMsg","Account created. Opening ZeroChat…");
-  }catch(e){
-    console.error(e);
-    let m=e.message;
-    if(e.code==="auth/email-already-in-use")m="This email already has an account. Login instead.";
-    if(e.code==="auth/invalid-email")m="That email address is not valid.";
-    if(e.code==="auth/weak-password")m="Password is too weak. Use at least 6 characters.";
-    if(e.code==="auth/operation-not-allowed")m="Email/Password login is not enabled in Firebase Console.";
-    if(e.code==="PERMISSION_DENIED")m="Realtime Database permission denied. Check your Database Rules.";
-    setMsg("signupMsg",m,true);
-  }finally{b.disabled=false;b.textContent="Create account"}
+    if(mode==='forgot'){await sendPasswordResetEmail(auth,email);toast('Reset email sent. Check your inbox.');setMode('login')}
+    else if(mode==='login'){if(!pw)throw{message:'Enter your password.'};await signInWithEmailAndPassword(auth,email,pw)}
+    else{
+      const name=$('aname').value.trim(),un=$('auser').value.trim().toLowerCase();
+      if(name.length<1||name.length>40)throw{message:'Display name must be 1-40 characters.'};
+      if(!/^[a-z0-9_]{3,20}$/.test(un))throw{message:'Username: 3-20 letters, numbers or underscores.'};
+      if(pw.length<6)throw{message:'Password must be at least 6 characters.'};
+      if(pw!==$('apass2').value)throw{message:'Passwords do not match.'};
+      busy=true;const cred=await createUserWithEmailAndPassword(auth,email,pw);
+      try{ // reserve username atomically, then create profile
+        const tx=await runTransaction(ref(db,'usernames/'+un),v=>v===null?cred.user.uid:undefined);
+        if(!tx.committed)throw{message:'That username is taken.'};
+        await set(ref(db,'users/'+cred.user.uid),{name,username:un,bio:'',photo:'',createdAt:serverTimestamp()});
+      }catch(e){await cred.user.delete().catch(()=>{});throw e}
+      busy=false;boot(cred.user);
+    }
+  }catch(e){busy=false;bad(msgOf(e))}
+  btn.disabled=false;btn.textContent=old;
 };
+$('out').onclick=async()=>{await remove(ref(db,'presence/'+me)).catch(()=>{});teardown();await signOut(auth)};
+onAuthStateChanged(auth,u=>{if(busy)return;if(u)boot(u);else{teardown();$('app').hidden=true;$('auth').hidden=false}});
 
-$("loginBtn").onclick=async()=>{
-  const email=$("loginEmail").value.trim(),p=$("loginPass").value;
-  setMsg("loginMsg","");
-  if(!email||!p)return setMsg("loginMsg","Enter email and password.",true);
-  const b=$("loginBtn");b.disabled=true;b.textContent="Logging in…";
-  try{await signInWithEmailAndPassword(auth,email,p);setMsg("loginMsg","Login successful.");}
-  catch(e){
-    let m=e.message;
-    if(e.code==="auth/invalid-credential"||e.code==="auth/wrong-password")m="Email or password is incorrect.";
-    if(e.code==="auth/user-not-found")m="No account found with this email.";
-    if(e.code==="auth/operation-not-allowed")m="Email/Password login is not enabled in Firebase Console.";
-    setMsg("loginMsg",m,true);
-  }finally{b.disabled=false;b.textContent="Login"}
-};
+/* ============ 4. APP STATE + LISTENERS ============ */
+const S={tab:'chats',FR:{},REQ:{},SENT:{},BL:{},UC:{},P:{},found:[]};
+let gsubs=[],booted=false,ucInit=false,frInit=false,reqInit=false;
+async function boot(user){
+  if(booted&&me===user.uid)return;
+  me=user.uid;const snap=await get(ref(db,'users/'+me)).catch(fail);
+  if(!snap||!snap.exists()){toast('Profile not found. Please sign up again.','err');await signOut(auth);return}
+  U[me]={...snap.val(),uid:me};booted=true;$('auth').hidden=true;$('app').hidden=false;
+  $('meAv').replaceChildren(av(U[me],36));
+  gsubs.push(onValue(ref(db,'.info/connected'),s=>{if(s.val()){const p=ref(db,'presence/'+me);onDisconnect(p).remove();onDisconnect(ref(db,`users/${me}/lastSeen`)).set(serverTimestamp());set(p,true)}}));
+  const watch=(path,key,after)=>gsubs.push(onValue(ref(db,path),async s=>{S[key]=s.val()||{};await Promise.all(Object.keys(S[key]).filter(k=>key!=='P'&&key!=='UC').map(getU));after&&after();render()},fail));
+  watch('presence/','P',()=>{if(cur)setHead()});
+  watch(`friends/${me}`,'FR',()=>{const n=Object.keys(S.FR);if(frInit&&n.length>(window._nf||0))note('Friend request accepted');window._nf=n.length;frInit=true});
+  watch(`requests/${me}`,'REQ',()=>{const n=Object.keys(S.REQ);if(reqInit&&n.length>(window._nr||0))note('New friend request');window._nr=n.length;reqInit=true});
+  watch(`sent/${me}`,'SENT');watch(`blocks/${me}`,'BL');
+  gsubs.push(onValue(ref(db,`userChats/${me}`),async s=>{
+    const nv=s.val()||{};
+    await Promise.all(Object.entries(nv).map(([k,v])=>v.type==='p'?getU(v.with):(G[k]?0:loadG(k).catch(()=>0))));
+    if(ucInit)for(const[k,v]of Object.entries(nv)){const o=S.UC[k];if(v.unread>(o?.unread||0)&&!(cur&&cur.id===k&&!document.hidden))
+      note(v.type==='p'?U[v.with].name:(G[k]?.name||'Group'),v.last)}
+    S.UC=nv;ucInit=true;
+    const tot=Object.values(nv).reduce((a,v)=>a+(v.unread||0),0);document.title=(tot?`(${tot}) `:'')+'ZeroChat';render()},fail));
+  render();
+}
+function teardown(){gsubs.forEach(f=>f());gsubs=[];closeRoom();booted=false;ucInit=frInit=reqInit=false;window._nf=window._nr=0;Object.assign(S,{FR:{},REQ:{},SENT:{},BL:{},UC:{},P:{},found:[]})}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));render()});
+$('meAv').onclick=profileModal;
 
-$("logout").onclick=async()=>{
-  if(user)try{await update(ref(db,"users/"+user.uid),{online:false,lastSeen:serverTimestamp()})}catch{}
-  await signOut(auth);
-};
-
-onAuthStateChanged(auth,async u=>{
-  user=u;
-  if(!u){
-    $("auth").classList.remove("hidden");$("app").classList.add("hidden");
-    if(stopMessages)stopMessages();if(stopOnline)stopOnline();
-    return;
+/* ============ 5. SIDEBAR RENDER ============ */
+const ago=t=>{if(!t)return'a while ago';const m=Math.floor((Date.now()-t)/6e4);return m<1?'just now':m<60?m+'m ago':m<1440?Math.floor(m/60)+'h ago':Math.floor(m/1440)+'d ago'};
+const online=id=>!!S.P[id];
+const person=(id,...btns)=>{const u=U[id]||{name:'…'};return h('div',{class:'item',onclick:()=>{if(S.FR[id])openRoom(privRoom(id))}},av(u),h('div',{class:'mid'},h('div',{text:u.name}),h('div',{class:'muted',text:'@'+(u.username||'')})),h('span',{class:online(id)?'dot on':'dot'}),...btns)};
+const bt=(t,f,c='')=>h('button',{class:c,text:t,onclick:e=>{e.stopPropagation();f()}});
+function render(){
+  const L=$('list'),rc=Object.keys(S.REQ).length;$('rb').hidden=!rc;$('rb').textContent=rc;if(!me)return;
+  const out=[];
+  if(S.tab==='chats'){
+    out.push(h('div',{class:'item',onclick:()=>openRoom({type:'w',id:'world',base:'world',title:'World Chat'})},h('div',{class:'av',style:'width:40px;height:40px',text:'🌍'}),h('div',{class:'mid'},h('div',{text:'World Chat'}),h('div',{class:'muted',text:Object.keys(S.P).length+' online'}))));
+    out.push(h('div',{style:'padding:6px'},h('button',{text:'+ New group',style:'width:100%',onclick:groupModal})));
+    const ents=Object.entries(S.UC).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
+    if(!ents.length)out.push(h('p',{class:'muted',style:'padding:16px',text:'No conversations yet. Add friends in Find, then message them from Friends.'}));
+    for(const[k,v]of ents){const p=v.type==='p',u=p?U[v.with]:G[k];if(!u)continue;
+      out.push(h('div',{class:'item',onclick:()=>openRoom(p?privRoom(v.with):grpRoom(k))},av(u),h('div',{class:'mid'},h('div',{text:u.name}),h('div',{class:'muted',text:v.last||''})),v.unread?h('span',{class:'badge',text:v.unread}):null))}
+  }else if(S.tab==='friends'){
+    const R=Object.keys(S.REQ),T=Object.keys(S.SENT),F=Object.keys(S.FR),B=Object.keys(S.BL);
+    if(R.length){out.push(h('div',{class:'sec',text:'Incoming requests'}));R.forEach(id=>out.push(person(id,bt('Accept',()=>accept(id),'pri'),bt('Reject',()=>reject(id)))))}
+    if(T.length){out.push(h('div',{class:'sec',text:'Sent requests'}));T.forEach(id=>out.push(person(id,bt('Cancel',()=>cancel(id)))))}
+    out.push(h('div',{class:'sec',text:'Friends ('+F.length+')'}));
+    if(!F.length)out.push(h('p',{class:'muted',style:'padding:8px',text:'No friends yet. Use Find to search by username.'}));
+    F.forEach(id=>out.push(person(id,bt('Remove',()=>confirm('Remove this friend?')&&unfriend(id)),bt('Block',()=>confirm('Block this user?')&&block(id),'danger'))));
+    if(B.length){out.push(h('div',{class:'sec',text:'Blocked'}));B.forEach(id=>out.push(person(id,bt('Unblock',()=>remove(ref(db,`blocks/${me}/${id}`)).catch(fail)))))}
+  }else{
+    const inp=h('input',{placeholder:'Search by username',value:S.q||'',oninput:e=>{S.q=e.target.value;clearTimeout(window._st);window._st=setTimeout(search,300)}});
+    out.push(h('div',{style:'padding:6px'},inp));
+    if(S.q&&!S.found.length)out.push(h('p',{class:'muted',style:'padding:12px',text:'No users found.'}));
+    S.found.forEach(id=>{if(id===me||S.BL[id])return;
+      const b=S.FR[id]?h('span',{class:'muted',text:'Friends'}):S.SENT[id]?bt('Cancel',()=>cancel(id)):S.REQ[id]?bt('Accept',()=>accept(id),'pri'):bt('Add',()=>sendReq(id),'pri');
+      out.push(person(id,b))});
+    setTimeout(()=>inp.isConnected&&S.keep&&inp.focus(),0);
   }
-  $("auth").classList.add("hidden");$("app").classList.remove("hidden");
-  $("myName").textContent=u.displayName||"User";
-  $("myEmail").textContent=u.email||"";
-  $("myAvatar").textContent=letter(u.displayName||u.email);
-  try{await update(ref(db,"users/"+u.uid),{name:u.displayName||"User",email:u.email||"",online:true,lastSeen:serverTimestamp()})}
-  catch(e){toast("Logged in, but database access is blocked. Check Realtime Database Rules.",true)}
-  startOnline();
-  openRoom("world","World Chat","Everyone can join");
-});
-
-function startOnline(){
-  if(stopOnline)stopOnline();
-  stopOnline=onValue(ref(db,"users"),snap=>{
-    const box=$("onlineUsers");box.innerHTML="";
-    snap.forEach(ch=>{
-      const u=ch.val();
-      if(u.online){
-        const d=document.createElement("div");d.className="online";
-        d.innerHTML=`<span class="dot"></span>${safe(u.name||"User")}`;
-        box.appendChild(d);
-      }
-    });
-  },e=>toast("Cannot read users: "+e.message,true));
+  S.keep=S.tab==='find';L.replaceChildren(...out);
+  if(S.keep){const i=L.querySelector('input');i.focus();i.setSelectionRange(i.value.length,i.value.length)}
 }
+async function search(){
+  const q=(S.q||'').trim().toLowerCase();if(!q){S.found=[];return render()}
+  try{const s=await get(query(ref(db,'usernames'),orderByKey(),startAt(q),endAt(q+'\uf8ff'),limitToFirst(10)));
+    S.found=Object.values(s.val()||{});await Promise.all(S.found.map(getU));render()}catch(e){fail(e)}}
 
-function openRoom(id,title,subtitle){
-  room=id;$("title").textContent=title;$("subtitle").textContent=subtitle;
-  if(stopMessages)stopMessages();
-  $("messages").innerHTML='<div class="empty">Loading messages…</div>';
-  const q=query(ref(db,"messages/"+room),orderByChild("createdAt"),limitToLast(100));
-  stopMessages=onValue(q,snap=>{
-    const arr=[];snap.forEach(ch=>arr.push({id:ch.key,...ch.val()}));
-    render(arr);
-  },e=>{$("messages").innerHTML=`<div class="empty" style="color:#ff9a9a">Database error: ${safe(e.message)}</div>`});
+/* ============ 6. FRIEND ACTIONS ============ */
+const root=()=>ref(db);
+const run=async(p,ok)=>{try{await update(root(),p);ok&&toast(ok)}catch(e){fail(e)}};
+function sendReq(id){if(S.FR[id]||S.SENT[id]||S.REQ[id])return toast('Request already exists.','err');
+  run({[`requests/${id}/${me}`]:serverTimestamp(),[`sent/${me}/${id}`]:serverTimestamp()},'Friend request sent')}
+const accept=id=>run({[`friends/${me}/${id}`]:true,[`friends/${id}/${me}`]:true,[`requests/${me}/${id}`]:null,[`sent/${id}/${me}`]:null},'You are now friends');
+const reject=id=>run({[`requests/${me}/${id}`]:null,[`sent/${id}/${me}`]:null});
+const cancel=id=>run({[`requests/${id}/${me}`]:null,[`sent/${me}/${id}`]:null},'Request cancelled');
+const unfriend=id=>run({[`friends/${me}/${id}`]:null,[`friends/${id}/${me}`]:null},'Friend removed');
+async function block(id){try{await set(ref(db,`blocks/${me}/${id}`),true);await unfriend(id);if(cur&&cur.other===id)closeRoom()}catch(e){fail(e)}}
+
+/* ============ 7. PROFILE ============ */
+function profileModal(){const u=U[me];
+  const n=h('input',{value:u.name,maxlength:40}),b=h('textarea',{maxlength:160,placeholder:'Bio',rows:3}),f=h('input',{type:'file',accept:'image/*'});b.value=u.bio||'';
+  modal(h('h2',{text:'Your profile'}),h('div',{style:'display:flex;gap:12px;align-items:center'},av(u,56),h('div',{},h('b',{text:'@'+u.username}),h('div',{class:'muted',text:'Joined '+new Date(u.createdAt||Date.now()).toLocaleDateString()}))),
+    n,b,h('label',{class:'muted',text:'Profile picture'}),f,
+    'Notification'in window&&Notification.permission==='default'?h('button',{text:'Enable browser notifications',onclick:()=>Notification.requestPermission()}):null,
+    h('button',{class:'pri',text:'Save changes',onclick:async e=>{const nm=n.value.trim();if(!nm)return toast('Name is required.','err');
+      e.target.disabled=true;try{const p={name:nm,bio:b.value.trim()};if(f.files[0]){if(!f.files[0].type.startsWith('image/'))throw{message:'Choose an image file.'};p.photo=await upload(f.files[0],'avatars')}
+        await update(ref(db,'users/'+me),p);Object.assign(U[me],p);$('meAv').replaceChildren(av(U[me],36));closeModal();toast('Profile saved')}catch(x){fail(x)}e.target.disabled=false}}),
+    h('button',{text:'Close',onclick:closeModal}))}
+
+/* ============ 8. GROUPS ============ */
+function groupModal(){
+  const n=h('input',{placeholder:'Group name',maxlength:40}),f=h('input',{type:'file',accept:'image/*'}),sel=new Set();
+  const fr=Object.keys(S.FR).map(id=>h('label',{class:'item'},h('input',{type:'checkbox',style:'width:auto',onchange:e=>e.target.checked?sel.add(id):sel.delete(id)}),av(U[id],30),h('span',{text:U[id].name})));
+  modal(h('h2',{text:'New group'}),n,h('label',{class:'muted',text:'Group picture (optional)'}),f,h('div',{class:'muted',text:'Add friends'}),...(fr.length?fr:[h('p',{class:'muted',text:'Add friends first to invite them.'})]),
+    h('button',{class:'pri',text:'Create group',onclick:async e=>{const nm=n.value.trim();if(!nm)return toast('Enter a group name.','err');
+      e.target.disabled=true;try{const gid=push(ref(db,'groups')).key,mem={[me]:true};sel.forEach(i=>mem[i]=true);
+        const photo=f.files[0]?await upload(f.files[0],'avatars'):'';
+        await set(ref(db,'groups/'+gid),{meta:{name:nm,photo,owner:me},members:mem});
+        await Promise.all(Object.keys(mem).map(k=>update(ref(db,`userChats/${k}/${gid}`),{type:'g',last:'Group created',ts:serverTimestamp(),unread:k===me?0:1})));
+        closeModal();await loadG(gid);openRoom(grpRoom(gid))}catch(x){fail(x)}e.target.disabled=false}}),h('button',{text:'Cancel',onclick:closeModal}))}
+async function groupInfo(){const gid=cur.id,g=await loadG(gid),own=g.owner===me,ids=Object.keys(g.members);await Promise.all(ids.map(getU));
+  const addable=Object.keys(S.FR).filter(i=>!g.members[i]);
+  modal(h('h2',{text:g.name}),h('div',{class:'muted',text:ids.length+' members'}),
+    ...ids.map(i=>h('div',{class:'item'},av(U[i],32),h('div',{class:'mid'},h('div',{text:U[i].name+(i===g.owner?' (owner)':'')})),h('span',{class:online(i)?'dot on':'dot'}),
+      own&&i!==me?bt('Remove',async()=>{try{await remove(ref(db,`groups/${gid}/members/${i}`));await remove(ref(db,`userChats/${i}/${gid}`));toast('Member removed');groupInfo()}catch(e){fail(e)}},'danger'):null)),
+    own&&addable.length?h('div',{},h('div',{class:'sec',text:'Add friends'}),...addable.map(i=>h('div',{class:'item'},av(U[i],30),h('div',{class:'mid',text:U[i].name}),bt('Add',async()=>{try{await set(ref(db,`groups/${gid}/members/${i}`),true);await update(ref(db,`userChats/${i}/${gid}`),{type:'g',last:'You were added to '+g.name,ts:serverTimestamp(),unread:1});toast('Member added');groupInfo()}catch(e){fail(e)}},'pri')))):null,
+    !own?h('button',{class:'danger',text:'Leave group',onclick:async()=>{try{await remove(ref(db,`userChats/${me}/${gid}`));await remove(ref(db,`groups/${gid}/members/${me}`));closeModal();closeRoom();toast('You left the group')}catch(e){fail(e)}}}):null,
+    h('button',{text:'Close',onclick:closeModal}))}
+
+/* ============ 9. ROOMS (private / group / world share one engine) ============ */
+const privRoom=o=>({type:'p',id:cidOf(me,o),base:'chats/'+cidOf(me,o),other:o});
+const grpRoom=g=>({type:'g',id:g,base:'groups/'+g});
+let cur=null,subs=[],M={},RX={},RD={},nodes={},replyTo=null,lastSend=0,typTimer,readTimer;
+function closeRoom(){subs.forEach(f=>f());subs=[];if(cur&&me)remove(ref(db,`${cur.base}/typing/${me}`)).catch(()=>{});cur=null;M={};RX={};RD={};nodes={};replyTo=null;$('room').hidden=true;$('empty').hidden=false;$('app').classList.remove('inroom')}
+function setHead(){if(!cur)return;let t,s,a;
+  if(cur.type==='p'){const u=U[cur.other];t=u.name;a=av(u,38);s=online(cur.other)?'online':'last seen '+ago(u.lastSeen)}
+  else if(cur.type==='g'){const g=G[cur.id]||{name:'Group',members:{}};t=g.name;a=av(g,38);s=Object.keys(g.members||{}).filter(online).length+' online · '+Object.keys(g.members||{}).length+' members'}
+  else{t='World Chat';a=h('div',{class:'av',style:'width:38px;height:38px',text:'🌍'});s=Object.keys(S.P).length+' people online'}
+  $('rTitle').textContent=t;$('rSub').textContent=s;$('rAv').replaceChildren(a);$('rInfo').hidden=cur.type!=='g'}
+async function openRoom(r){
+  closeRoom();cur=r;$('room').hidden=false;$('empty').hidden=true;$('app').classList.add('inroom');$('msgs').replaceChildren();$('rq').value='';$('rbar').hidden=true;
+  try{if(r.type==='p')await getU(r.other);if(r.type==='g')await loadG(r.id)}catch(e){fail(e);closeRoom();return}
+  if(cur!==r)return;setHead();const base=r.base;
+  const q=query(ref(db,base+'/messages'),limitToLast(150));
+  subs.push(onChildAdded(q,s=>{M[s.key]=s.val();paint(s.key,true);markRead()},e=>{fail(e);closeRoom()}));
+  subs.push(onChildChanged(q,s=>{M[s.key]=s.val();paint(s.key)}));
+  subs.push(onChildRemoved(q,s=>{delete M[s.key];nodes[s.key]?.remove();delete nodes[s.key]}));
+  subs.push(onValue(ref(db,base+'/reactions'),s=>{RX=s.val()||{};Object.keys(M).forEach(k=>paint(k))}));
+  if(r.type!=='w')subs.push(onValue(ref(db,base+'/read'),s=>{RD=s.val()||{};Object.keys(M).forEach(k=>M[k].from===me&&paint(k))}));
+  subs.push(onValue(ref(db,base+'/typing'),async s=>{const t=Object.keys(s.val()||{}).filter(k=>k!==me);const us=await Promise.all(t.map(getU));$('typing').textContent=us.length?us.map(u=>u.name).join(', ')+' typing…':''}));
+  $('inp').focus();
 }
-function render(arr){
-  const box=$("messages");box.innerHTML="";
-  if(!arr.length){box.innerHTML='<div class="empty">No messages yet. Say hello 👋</div>';return}
-  for(const m of arr){
-    const mine=m.uid===user.uid,d=document.createElement("div");d.className="message"+(mine?" mine":"");
-    const time=m.createdAt?new Date(m.createdAt).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"sending…";
-    d.innerHTML=`<div class="bubble">${safe(m.text)}</div><div class="meta">${mine?"You":safe(m.name||"User")} · ${time}</div>`;
-    box.appendChild(d);
-  }
-  box.scrollTop=box.scrollHeight;
+function markRead(){if(!cur||cur.type==='w'||document.hidden)return;clearTimeout(readTimer);const c=cur;
+  readTimer=setTimeout(()=>{if(cur!==c)return;set(ref(db,`${c.base}/read/${me}`),serverTimestamp()).catch(()=>{});if(S.UC[c.id]?.unread)update(ref(db,`userChats/${me}/${c.id}`),{unread:0}).catch(()=>{})},300)}
+document.addEventListener('visibilitychange',markRead);
+function paint(id,isNew){
+  const m=M[id];if(!m||!cur)return;const mine=m.from===me,u=U[m.from];if(!u)getU(m.from).then(()=>paint(id));
+  const rx={};Object.values(RX[id]||{}).forEach(e=>rx[e]=(rx[e]||0)+1);
+  const body=[];
+  if(!mine&&cur.type!=='p')body.push(h('div',{class:'nm',text:u?u.name:'…'}));
+  if(m.reply)body.push(h('div',{class:'quote'},h('b',{text:m.reply.name}),h('span',{text:m.reply.text})));
+  if(m.type==='image'&&safe(m.url))body.push(h('img',{class:'pic',src:m.url,alt:'photo',onclick:()=>window.open(m.url,'_blank','noopener')}));
+  else if(m.type==='file'&&safe(m.url))body.push(h('a',{class:'file',href:m.url,target:'_blank',rel:'noopener',text:'📎 '+(m.name||'file')}));
+  if(m.text)body.push(h('div',{class:'txt',text:m.text}));
+  if(Object.keys(rx).length)body.push(h('div',{class:'rx'},...Object.entries(rx).map(([e,n])=>h('span',{text:e+' '+n}))));
+  const tk=mine&&cur.type==='p'?(RD[cur.other]>=m.ts?'✓✓':'✓'):'';
+  body.push(h('div',{class:'meta'},document.createTextNode((m.edited?'edited · ':'')+(typeof m.ts==='number'?new Date(m.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'')+' '),h('span',{class:tk==='✓✓'?'seen':'',text:tk})));
+  const acts=h('div',{class:'acts'},bt('↩',()=>setReply(id)),bt('❤',()=>react(id,'❤️')),bt('👍',()=>react(id,'👍')),
+    mine&&m.text?bt('✎',()=>edit(id)):null,mine?bt('🗑',()=>confirm('Delete this message?')&&remove(ref(db,`${cur.base}/messages/${id}`)).catch(fail)):null,
+    !mine&&cur.type==='w'?bt('⚑',()=>report(id)):null);
+  const node=h('div',{class:'row'+(mine?' mine':'')},!mine&&cur.type!=='p'?av(u,28):null,h('div',{class:'bub'},acts,...body));
+  const box=$('msgs'),near=box.scrollHeight-box.scrollTop-box.clientHeight<150;
+  if(nodes[id])nodes[id].replaceWith(node);else box.append(node);nodes[id]=node;
+  filter(node);if(isNew&&(near||mine))box.scrollTop=box.scrollHeight}
+const filter=n=>{const q=$('rq').value.trim().toLowerCase();n.hidden=!!q&&!n.textContent.toLowerCase().includes(q)};
+$('rq').oninput=()=>Object.values(nodes).forEach(filter);
+function setReply(id){const m=M[id];replyTo={id,name:(U[m.from]||{}).name||'?',text:(m.text||(m.type==='image'?'Photo':'File')).slice(0,80)};$('rtxt').textContent='Replying to '+replyTo.name+': '+replyTo.text;$('rbar').hidden=false;$('inp').focus()}
+$('rx').onclick=()=>{replyTo=null;$('rbar').hidden=true};
+const react=(id,e)=>{const p=ref(db,`${cur.base}/reactions/${id}/${me}`);(RX[id]?.[me]===e?remove(p):set(p,e)).catch(fail)};
+function edit(id){const t=prompt('Edit message',M[id].text);if(t===null)return;if(!t.trim())return toast('Message cannot be empty.','err');update(ref(db,`${cur.base}/messages/${id}`),{text:t.trim().slice(0,2000),edited:true}).catch(fail)}
+async function report(id){const why=prompt('Why are you reporting this message?');if(!why)return;try{await push(ref(db,'reports'),{from:me,msgId:id,offender:M[id].from,text:(M[id].text||'[media]').slice(0,200),reason:why.slice(0,200),ts:serverTimestamp()});toast('Report submitted. Thank you.')}catch(e){fail(e)}}
+
+/* ---- sending ---- */
+async function send(extra={}){
+  if(!cur)return;const text=$('inp').value.trim();if(!text&&!extra.url)return;
+  if(Date.now()-lastSend<(cur.type==='w'?1500:250))return toast('Slow down a little.','err');lastSend=Date.now();
+  const m={from:me,ts:serverTimestamp(),...extra};if(text)m.text=text;if(replyTo)m.reply=replyTo;
+  $('inp').value='';$('rx').onclick();const c=cur;
+  try{await push(ref(db,c.base+'/messages'),m);remove(ref(db,`${c.base}/typing/${me}`)).catch(()=>{});
+    const last=(extra.type==='image'?'📷 Photo':extra.type==='file'?'📎 '+extra.name:text).slice(0,80),ts=serverTimestamp();
+    if(c.type==='p'){const o=c.other;await update(root(),{[`userChats/${me}/${c.id}`]:{type:'p',with:o,last,ts,unread:0},[`userChats/${o}/${c.id}/type`]:'p',[`userChats/${o}/${c.id}/with`]:me,[`userChats/${o}/${c.id}/last`]:last,[`userChats/${o}/${c.id}/ts`]:ts});
+      runTransaction(ref(db,`userChats/${o}/${c.id}/unread`),n=>(n||0)+1)}
+    else if(c.type==='g'){for(const k of Object.keys((G[c.id]||{}).members||{})){update(ref(db,`userChats/${k}/${c.id}`),{type:'g',last,ts,...(k===me?{unread:0}:{})}).catch(()=>{});if(k!==me)runTransaction(ref(db,`userChats/${k}/${c.id}/unread`),n=>(n||0)+1)}}
+  }catch(e){$('inp').value=text;fail(e)}
 }
-
-$("composer").onsubmit=async e=>{
-  e.preventDefault();
-  const text=$("message").value.trim();if(!text||!user)return;
-  $("message").disabled=true;
-  try{
-    await push(ref(db,"messages/"+room),{
-      uid:user.uid,name:user.displayName||"User",text,createdAt:serverTimestamp()
-    });
-    $("message").value="";
-  }catch(e){toast("Message failed: "+e.message,true)}
-  finally{$("message").disabled=false;$("message").focus()}
-};
-
-document.querySelectorAll(".navBtn").forEach(b=>b.onclick=async()=>{
-  document.querySelectorAll(".navBtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
-  const s=b.dataset.section;
-  $("usersList").classList.toggle("hidden",s!=="friends");
-  $("groupsList").classList.toggle("hidden",s!=="groups");
-  $("createGroup").classList.toggle("hidden",s!=="groups");
-  if(s==="world")openRoom("world","World Chat","Everyone can join");
-  if(s==="friends")loadUsers();
-  if(s==="groups")loadGroups();
-});
-
-async function loadUsers(){
-  $("usersList").innerHTML='<div class="empty" style="margin-top:20px">Loading…</div>';
-  try{
-    const snap=await get(ref(db,"users"));$("usersList").innerHTML="";
-    snap.forEach(ch=>{
-      if(ch.key===user.uid)return;
-      const u=ch.val(),d=document.createElement("div");d.className="row";
-      d.innerHTML=`<div class="avatar">${letter(u.name)}</div><div class="row-text"><strong>${safe(u.name||"User")}</strong><small>${u.online?"🟢 Online":"Offline"}</small></div>`;
-      d.onclick=()=>openPrivate(ch.key,u.name||"User");
-      $("usersList").appendChild(d);
-    });
-    if(!$("usersList").children.length)$("usersList").innerHTML='<div class="empty" style="margin-top:20px">No other users yet.</div>';
-  }catch(e){$("usersList").innerHTML=`<div class="msg" style="margin:20px">Cannot load users: ${safe(e.message)}</div>`}
-}
-function privateId(a,b){return [a,b].sort().join("_")}
-function openPrivate(uid,name){
-  openRoom("private_"+privateId(user.uid,uid),name,"Private chat");
-}
-
-$("createGroup").onclick=async()=>{
-  const name=prompt("Enter group name:");
-  if(!name||!name.trim())return;
-  try{
-    const g=push(ref(db,"groups"));
-    await set(g,{name:name.trim(),owner:user.uid,createdAt:serverTimestamp(),members:{[user.uid]:true}});
-    toast("Group created.");
-    loadGroups();
-  }catch(e){toast("Could not create group: "+e.message,true)}
-};
-
-async function loadGroups(){
-  $("groupsList").innerHTML='<div class="empty" style="margin-top:20px">Loading…</div>';
-  try{
-    const snap=await get(ref(db,"groups"));$("groupsList").innerHTML="";
-    snap.forEach(ch=>{
-      const g=ch.val();
-      if(g.owner===user.uid||g.members?.[user.uid]){
-        const d=document.createElement("div");d.className="row";
-        d.innerHTML=`<div class="avatar">#</div><div class="row-text"><strong>${safe(g.name)}</strong><small>Group</small></div>`;
-        d.onclick=()=>openRoom("group_"+ch.key,g.name,"Group chat");
-        $("groupsList").appendChild(d);
-      }
-    });
-    if(!$("groupsList").children.length)$("groupsList").innerHTML='<div class="empty" style="margin-top:20px">No groups yet.</div>';
-  }catch(e){$("groupsList").innerHTML=`<div class="msg" style="margin:20px">Cannot load groups: ${safe(e.message)}</div>`}
-}
-</script>
-</body>
-</html>
+$('send').onclick=()=>send();
+$('inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+$('inp').addEventListener('input',()=>{if(!cur)return;const p=ref(db,`${cur.base}/typing/${me}`);onDisconnect(p).remove();set(p,true).catch(()=>{});clearTimeout(typTimer);const c=cur;typTimer=setTimeout(()=>remove(ref(db,`${c.base}/typing/${me}`)).catch(()=>{}),2000)});
+$('attach').onclick=()=>$('file').click();
+$('file').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||!cur)return;const img=f.type.startsWith('image/');
+  if(cur.type==='w'&&!img)return toast('World Chat supports images only.','err');
+  toast('Uploading…');try{const url=await upload(f,'uploads');await send(img?{type:'image',url}:{type:'file',url,name:f.name.slice(0,100)})}catch(x){fail(x)}};
+const EMO=Array.from('😀😂😍🥰😎🤔😢😡👍👎🙏👏🔥🎉❤️💯😅😭🙌🤝👀✨😴🤯😇🥳😉😋🤗😬🙄💪🎶');
+$('emo').replaceChildren(...EMO.map(e=>h('button',{text:e,onclick:()=>{$('inp').value+=e;$('emo').hidden=true;$('inp').focus()}})));
+$('emoBtn').onclick=()=>{$('emo').hidden=!$('emo').hidden};
+$('back').onclick=closeRoom;$('rInfo').onclick=groupInfo;
+</script></body></html>
