@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ZeroChat</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:#070b14;color:#eef4ff}
+button,input{font:inherit}button{cursor:pointer}input{outline:none}
+.hidden{display:none!important}
+#toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 18px;border-radius:12px;background:#18233d;border:1px solid #33486f;box-shadow:0 12px 40px #0008;opacity:0;pointer-events:none;transition:.2s}
+#toast.show{opacity:1}.error{border-color:#7d3c48!important}.success{border-color:#317054!important}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 0,#1a2c55 0,#070b14 55%)}
+.card{width:min(430px,94vw);padding:30px;border:1px solid #263858;background:#101827dd;border-radius:24px;box-shadow:0 30px 100px #0009}
+.logo{font-weight:900;font-size:30px;letter-spacing:2px}.logo span{color:#6ea0ff}
+.tag{color:#8f9db8;margin:8px 0 26px}.card h2{margin:0 0 14px}
+.field{width:100%;padding:13px 14px;margin:6px 0;background:#0b1220;border:1px solid #293a5c;border-radius:11px;color:#fff}
+.primary{width:100%;padding:13px;border:0;border-radius:11px;background:linear-gradient(135deg,#5d8cff,#795cf6);color:white;font-weight:800;margin-top:8px}
+.link{background:none;border:0;color:#78a7ff;padding:0}.switch{color:#8998b4;text-align:center;font-size:13px;margin-top:18px}
+.msg{min-height:18px;font-size:12px;margin-top:10px;color:#ff9a9a}.msg.ok{color:#70e0a0}
+.app{height:100vh;display:grid;grid-template-columns:270px minmax(0,1fr) 250px;background:#090e18}
+.sidebar,.right{background:#0e1625;border-color:#202e4b}.sidebar{border-right:1px solid #202e4b}.right{border-left:1px solid #202e4b;padding:20px}
+.side-top{height:68px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #202e4b}
+.logo.small{font-size:20px}.icon{width:38px;height:38px;border:0;border-radius:10px;background:#1d2a46;color:#fff}
+.me{display:flex;gap:11px;align-items:center;padding:18px;border-bottom:1px solid #202e4b}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#5d8cff,#895cf4);font-weight:900;flex:none}
+.me small{display:block;color:#7788a7;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.nav{padding:12px}.nav button{display:block;width:100%;border:0;background:transparent;color:#aebbd3;text-align:left;padding:12px;border-radius:10px;margin:2px 0}.nav button.active,.nav button:hover{background:#1a2947;color:#fff}
+.list{padding:8px 12px;max-height:calc(100vh - 260px);overflow:auto}.row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px}.row:hover{background:#18253f}.row .avatar{width:34px;height:34px;font-size:12px}.row-text{min-width:0}.row-text strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-text small{color:#7788a7}
+.chat{min-width:0;display:flex;flex-direction:column}.head{height:76px;border-bottom:1px solid #202e4b;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}.head h2{font-size:18px;margin:0}.head p{font-size:12px;color:#7f8eab;margin:4px 0 0}
+.messages{flex:1;overflow:auto;padding:24px}.empty{text-align:center;color:#71809d;margin-top:90px}
+.message{max-width:72%;margin:9px 0}.message.mine{margin-left:auto}.bubble{display:inline-block;padding:10px 13px;border-radius:15px;background:#16223a;border:1px solid #273858;white-space:pre-wrap;word-break:break-word}.mine .bubble{background:#31558f;border-color:#426db0}.meta{font-size:10px;color:#71809d;margin:4px 6px}.mine .meta{text-align:right}
+.composer{display:flex;gap:9px;padding:14px;border-top:1px solid #202e4b}.composer input{flex:1;padding:13px 15px;background:#111a2c;border:1px solid #293b60;border-radius:13px;color:white}.send{width:50px;border:0;border-radius:12px;background:#5d8cff;color:white;font-size:18px}
+.online-title{margin:0 0 14px;font-size:15px}.online{display:flex;align-items:center;gap:8px;padding:8px 0;color:#c9d4e8;font-size:13px}.dot{width:8px;height:8px;border-radius:50%;background:#35d88b}.tip{margin-top:24px;padding:13px;border:1px solid #263858;background:#131e33;border-radius:13px;color:#8290aa;font-size:12px;line-height:1.5}
+@media(max-width:900px){.app{grid-template-columns:220px minmax(0,1fr)}.right{display:none}}
+@media(max-width:650px){.app{grid-template-columns:1fr}.sidebar{display:none}.messages{padding:14px}.message{max-width:88%}}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<section id="auth" class="auth">
+  <div class="card">
+    <div class="logo"><span>ZERO</span>CHAT</div>
+    <div class="tag">Real-time chat, made simple.</div>
+
+    <div id="loginPanel">
+      <h2>Login</h2>
+      <input id="loginEmail" class="field" type="email" autocomplete="email" placeholder="Email">
+      <input id="loginPass" class="field" type="password" autocomplete="current-password" placeholder="Password">
+      <button id="loginBtn" class="primary">Login</button>
+      <div id="loginMsg" class="msg"></div>
+      <p class="switch">New here? <button id="goSignup" class="link">Create an account</button></p>
+    </div>
+
+    <div id="signupPanel" class="hidden">
+      <h2>Create account</h2>
+      <input id="name" class="field" type="text" maxlength="30" placeholder="Display name">
+      <input id="signupEmail" class="field" type="email" autocomplete="email" placeholder="Email">
+      <input id="signupPass" class="field" type="password" autocomplete="new-password" placeholder="Password (6+ characters)">
+      <input id="signupPass2" class="field" type="password" autocomplete="new-password" placeholder="Confirm password">
+      <button id="signupBtn" class="primary">Create account</button>
+      <div id="signupMsg" class="msg"></div>
+      <p class="switch">Already have an account? <button id="goLogin" class="link">Login</button></p>
+    </div>
+  </div>
+</section>
+
+<section id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="side-top">
+      <div class="logo small"><span>ZERO</span>CHAT</div>
+      <button id="logout" class="icon" title="Logout">↪</button>
+    </div>
+    <div class="me">
+      <div id="myAvatar" class="avatar">Z</div>
+      <div><strong id="myName">User</strong><small id="myEmail"></small></div>
+    </div>
+    <div class="nav">
+      <button class="navBtn active" data-section="world">🌍 World Chat</button>
+      <button class="navBtn" data-section="friends">👥 Users</button>
+      <button class="navBtn" data-section="groups">▣ Groups</button>
+    </div>
+    <div id="usersList" class="list hidden"></div>
+    <div id="groupsList" class="list hidden"></div>
+  </aside>
+
+  <main class="chat">
+    <header class="head">
+      <div><h2 id="title">World Chat</h2><p id="subtitle">Everyone can join</p></div>
+      <button id="createGroup" class="icon hidden" title="Create group">＋</button>
+    </header>
+    <div id="messages" class="messages"><div class="empty">Loading…</div></div>
+    <form id="composer" class="composer">
+      <input id="message" maxlength="2000" autocomplete="off" placeholder="Write a message…">
+      <button class="send">➤</button>
+    </form>
+  </main>
+
+  <aside class="right">
+    <h3 class="online-title">Online users</h3>
+    <div id="onlineUsers"></div>
+    <div class="tip"><b>ZeroChat</b><br>Open this app in another browser/device with another account to test real-time chat.</div>
+  </aside>
+</section>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword, signOut, updateProfile
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  getDatabase, ref, set, update, push, onValue, get,
+  query, orderByChild, limitToLast, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCKaBiOUjgwtmJTWGf8alMN2m6bDgHf2eQ",
+  authDomain:"zerochat-b41a2.firebaseapp.com",
+  databaseURL:"https://zerochat-b41a2-default-rtdb.firebaseio.com/",
+  projectId:"zerochat-b41a2",
+  storageBucket:"zerochat-b41a2.firebasestorage.app",
+  messagingSenderId:"259509798453",
+  appId:"1:259509798453:web:d3571d6211325609b2537c",
+  measurementId:"G-3TRJWP4GP6"
+};
+
+const firebaseApp=initializeApp(firebaseConfig);
+const auth=getAuth(firebaseApp);
+const db=getDatabase(firebaseApp);
+
+const $=id=>document.getElementById(id);
+let user=null, room="world", stopMessages=null, stopOnline=null;
+
+function toast(text,error=false){
+  const x=$("toast");x.textContent=text;x.className="show"+(error?" error":"");
+  clearTimeout(window.__toast);window.__toast=setTimeout(()=>x.className="",3200);
+}
+function setMsg(id,text,error=false){const x=$(id);x.textContent=text;x.className="msg"+(error?"":" ok")}
+function letter(name){return (name||"U").trim().charAt(0).toUpperCase()}
+function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+$("goSignup").onclick=()=>{
+  $("loginPanel").classList.add("hidden");$("signupPanel").classList.remove("hidden");
+  $("loginMsg").textContent="";
+};
+$("goLogin").onclick=()=>{
+  $("signupPanel").classList.add("hidden");$("loginPanel").classList.remove("hidden");
+  $("signupMsg").textContent="";
+};
+
+$("signupBtn").onclick=async()=>{
+  const name=$("name").value.trim(),email=$("signupEmail").value.trim(),p=$("signupPass").value,p2=$("signupPass2").value;
+  setMsg("signupMsg","");
+  if(name.length<2)return setMsg("signupMsg","Name must be at least 2 characters.",true);
+  if(!email)return setMsg("signupMsg","Enter your email.",true);
+  if(p.length<6)return setMsg("signupMsg","Password must be at least 6 characters.",true);
+  if(p!==p2)return setMsg("signupMsg","Passwords do not match.",true);
+  const b=$("signupBtn");b.disabled=true;b.textContent="Creating…";
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,p);
+    await updateProfile(cred.user,{displayName:name});
+    await set(ref(db,"users/"+cred.user.uid),{
+      name,email,online:true,createdAt:serverTimestamp(),lastSeen:serverTimestamp()
+    });
+    setMsg("signupMsg","Account created. Opening ZeroChat…");
+  }catch(e){
+    console.error(e);
+    let m=e.message;
+    if(e.code==="auth/email-already-in-use")m="This email already has an account. Login instead.";
+    if(e.code==="auth/invalid-email")m="That email address is not valid.";
+    if(e.code==="auth/weak-password")m="Password is too weak. Use at least 6 characters.";
+    if(e.code==="auth/operation-not-allowed")m="Email/Password login is not enabled in Firebase Console.";
+    if(e.code==="PERMISSION_DENIED")m="Realtime Database permission denied. Check your Database Rules.";
+    setMsg("signupMsg",m,true);
+  }finally{b.disabled=false;b.textContent="Create account"}
+};
+
+$("loginBtn").onclick=async()=>{
+  const email=$("loginEmail").value.trim(),p=$("loginPass").value;
+  setMsg("loginMsg","");
+  if(!email||!p)return setMsg("loginMsg","Enter email and password.",true);
+  const b=$("loginBtn");b.disabled=true;b.textContent="Logging in…";
+  try{await signInWithEmailAndPassword(auth,email,p);setMsg("loginMsg","Login successful.");}
+  catch(e){
+    let m=e.message;
+    if(e.code==="auth/invalid-credential"||e.code==="auth/wrong-password")m="Email or password is incorrect.";
+    if(e.code==="auth/user-not-found")m="No account found with this email.";
+    if(e.code==="auth/operation-not-allowed")m="Email/Password login is not enabled in Firebase Console.";
+    setMsg("loginMsg",m,true);
+  }finally{b.disabled=false;b.textContent="Login"}
+};
+
+$("logout").onclick=async()=>{
+  if(user)try{await update(ref(db,"users/"+user.uid),{online:false,lastSeen:serverTimestamp()})}catch{}
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth,async u=>{
+  user=u;
+  if(!u){
+    $("auth").classList.remove("hidden");$("app").classList.add("hidden");
+    if(stopMessages)stopMessages();if(stopOnline)stopOnline();
+    return;
+  }
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");
+  $("myName").textContent=u.displayName||"User";
+  $("myEmail").textContent=u.email||"";
+  $("myAvatar").textContent=letter(u.displayName||u.email);
+  try{await update(ref(db,"users/"+u.uid),{name:u.displayName||"User",email:u.email||"",online:true,lastSeen:serverTimestamp()})}
+  catch(e){toast("Logged in, but database access is blocked. Check Realtime Database Rules.",true)}
+  startOnline();
+  openRoom("world","World Chat","Everyone can join");
+});
+
+function startOnline(){
+  if(stopOnline)stopOnline();
+  stopOnline=onValue(ref(db,"users"),snap=>{
+    const box=$("onlineUsers");box.innerHTML="";
+    snap.forEach(ch=>{
+      const u=ch.val();
+      if(u.online){
+        const d=document.createElement("div");d.className="online";
+        d.innerHTML=`<span class="dot"></span>${safe(u.name||"User")}`;
+        box.appendChild(d);
+      }
+    });
+  },e=>toast("Cannot read users: "+e.message,true));
+}
+
+function openRoom(id,title,subtitle){
+  room=id;$("title").textContent=title;$("subtitle").textContent=subtitle;
+  if(stopMessages)stopMessages();
+  $("messages").innerHTML='<div class="empty">Loading messages…</div>';
+  const q=query(ref(db,"messages/"+room),orderByChild("createdAt"),limitToLast(100));
+  stopMessages=onValue(q,snap=>{
+    const arr=[];snap.forEach(ch=>arr.push({id:ch.key,...ch.val()}));
+    render(arr);
+  },e=>{$("messages").innerHTML=`<div class="empty" style="color:#ff9a9a">Database error: ${safe(e.message)}</div>`});
+}
+function render(arr){
+  const box=$("messages");box.innerHTML="";
+  if(!arr.length){box.innerHTML='<div class="empty">No messages yet. Say hello 👋</div>';return}
+  for(const m of arr){
+    const mine=m.uid===user.uid,d=document.createElement("div");d.className="message"+(mine?" mine":"");
+    const time=m.createdAt?new Date(m.createdAt).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"sending…";
+    d.innerHTML=`<div class="bubble">${safe(m.text)}</div><div class="meta">${mine?"You":safe(m.name||"User")} · ${time}</div>`;
+    box.appendChild(d);
+  }
+  box.scrollTop=box.scrollHeight;
+}
+
+$("composer").onsubmit=async e=>{
+  e.preventDefault();
+  const text=$("message").value.trim();if(!text||!user)return;
+  $("message").disabled=true;
+  try{
+    await push(ref(db,"messages/"+room),{
+      uid:user.uid,name:user.displayName||"User",text,createdAt:serverTimestamp()
+    });
+    $("message").value="";
+  }catch(e){toast("Message failed: "+e.message,true)}
+  finally{$("message").disabled=false;$("message").focus()}
+};
+
+document.querySelectorAll(".navBtn").forEach(b=>b.onclick=async()=>{
+  document.querySelectorAll(".navBtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+  const s=b.dataset.section;
+  $("usersList").classList.toggle("hidden",s!=="friends");
+  $("groupsList").classList.toggle("hidden",s!=="groups");
+  $("createGroup").classList.toggle("hidden",s!=="groups");
+  if(s==="world")openRoom("world","World Chat","Everyone can join");
+  if(s==="friends")loadUsers();
+  if(s==="groups")loadGroups();
+});
+
+async function loadUsers(){
+  $("usersList").innerHTML='<div class="empty" style="margin-top:20px">Loading…</div>';
+  try{
+    const snap=await get(ref(db,"users"));$("usersList").innerHTML="";
+    snap.forEach(ch=>{
+      if(ch.key===user.uid)return;
+      const u=ch.val(),d=document.createElement("div");d.className="row";
+      d.innerHTML=`<div class="avatar">${letter(u.name)}</div><div class="row-text"><strong>${safe(u.name||"User")}</strong><small>${u.online?"🟢 Online":"Offline"}</small></div>`;
+      d.onclick=()=>openPrivate(ch.key,u.name||"User");
+      $("usersList").appendChild(d);
+    });
+    if(!$("usersList").children.length)$("usersList").innerHTML='<div class="empty" style="margin-top:20px">No other users yet.</div>';
+  }catch(e){$("usersList").innerHTML=`<div class="msg" style="margin:20px">Cannot load users: ${safe(e.message)}</div>`}
+}
+function privateId(a,b){return [a,b].sort().join("_")}
+function openPrivate(uid,name){
+  openRoom("private_"+privateId(user.uid,uid),name,"Private chat");
+}
+
+$("createGroup").onclick=async()=>{
+  const name=prompt("Enter group name:");
+  if(!name||!name.trim())return;
+  try{
+    const g=push(ref(db,"groups"));
+    await set(g,{name:name.trim(),owner:user.uid,createdAt:serverTimestamp(),members:{[user.uid]:true}});
+    toast("Group created.");
+    loadGroups();
+  }catch(e){toast("Could not create group: "+e.message,true)}
+};
+
+async function loadGroups(){
+  $("groupsList").innerHTML='<div class="empty" style="margin-top:20px">Loading…</div>';
+  try{
+    const snap=await get(ref(db,"groups"));$("groupsList").innerHTML="";
+    snap.forEach(ch=>{
+      const g=ch.val();
+      if(g.owner===user.uid||g.members?.[user.uid]){
+        const d=document.createElement("div");d.className="row";
+        d.innerHTML=`<div class="avatar">#</div><div class="row-text"><strong>${safe(g.name)}</strong><small>Group</small></div>`;
+        d.onclick=()=>openRoom("group_"+ch.key,g.name,"Group chat");
+        $("groupsList").appendChild(d);
+      }
+    });
+    if(!$("groupsList").children.length)$("groupsList").innerHTML='<div class="empty" style="margin-top:20px">No groups yet.</div>';
+  }catch(e){$("groupsList").innerHTML=`<div class="msg" style="margin:20px">Cannot load groups: ${safe(e.message)}</div>`}
+}
+</script>
+</body>
+</html>
